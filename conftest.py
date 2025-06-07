@@ -3,7 +3,7 @@ import pytest
 from data import WEBPAGE, const
 from selenium import webdriver
 from page_objects.constructor_page import ConstructorPage
-#from page_objects.make_order_page import MakeOrderPage
+from page_objects.personal_account_page import PersonalAccountPage
 
 @pytest.fixture(scope='class', params=["chrome", "firefox"])
 def driver(request):
@@ -20,18 +20,14 @@ def driver(request):
     yield driver
     driver.quit()
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='class')
 def constructor_page(driver):
     constructor_page = ConstructorPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
     constructor_page.open_start_page()
     return constructor_page
 
-
-"""
-@pytest.fixture(scope='function')
-def make_order_page(driver):
-    make_order_page = MakeOrderPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=const['WEBPAGE'])
-    make_order_page.open_start_page()
-    return make_order_page
-    
-"""
+@pytest.fixture(scope='class')
+def personal_account_page(driver):
+    personal_account_page = PersonalAccountPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
+    personal_account_page.open_start_page()
+    return personal_account_page

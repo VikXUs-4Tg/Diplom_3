@@ -1,8 +1,8 @@
 import allure
 
-from page_objects.base_page import BasePage
-#from locators.main_page_locators import MainPageLocators as MPL
 from data import const
+from page_objects.base_page import BasePage
+
 
 
 
