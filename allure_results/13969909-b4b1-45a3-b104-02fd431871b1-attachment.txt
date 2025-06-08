@@ -1,0 +1,3 @@
+Код ответа: 200
+Тело ответа:
+{"success":true,"user":{"email":"38sw@pdoucv.tt","name":"38sw"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDVkOGU1OWVkMjgwMDAxYjYxMzc5ZSIsImlhdCI6MTc0OTQwNzk3MywiZXhwIjoxNzQ5NDA5MTczfQ.ZcD4lYj4gkQO_FEYDLB3AvDZJ3HwT6JIJU5q8M25b7k","refreshToken":"5bf5d5740da41e994aff28adb28bf4c160c0d701e473b6d9533596f4d8399e6239241c009b3f6937"}

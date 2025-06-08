@@ -1,0 +1,136 @@
+import allure
+import random
+import string
+import requests
+
+from data import const
+
+
+class Tools:
+
+    @staticmethod
+    def check_text_of_element(expected_value, actually_value):
+        assert expected_value in actually_value, f'\nОжидаемое значение:\n"{expected_value}"\nФактическое значение:\n"{actually_value}"'
+
+    @staticmethod
+    def check_that_value_differs_from_not_expected_value(actually_value, not_expected_value):
+        assert int(actually_value) != not_expected_value, f'\nОжидаемое значение:\n"{actually_value}"\nне отличается от:\n"{not_expected_value}"'
+
+    @staticmethod
+    def replace_string_in_locator(locator, string_to_replace, new_string):
+        return locator.replace(string_to_replace, new_string)
+
+    @staticmethod
+    def find_ingredient_name_by_id(ingredients_list, ingredient_id):
+        for ingredient in ingredients_list:
+            if ingredient['_id'] == ingredient_id: return ingredient['name']
+        return None
+
+class RequestTools:
+
+    @staticmethod
+    @allure.step("Отправляем запрос на ручку")
+    def send_request(handler, headers = None, params = None, data = None, tail=None):
+        method, endpoint = handler
+        if tail:
+            response = getattr(requests, method)(endpoint + str(tail), headers=headers, params=params, data=data)
+        else:
+            response = getattr(requests, method)(endpoint, headers=headers, params=params, data=data)
+        return response
+
+    @staticmethod
+    @allure.step("Пытаемся зарегистрировать пользователя")
+    def try_to_register_new_user(user):
+        response = RequestTools.send_request(handler=const['HANDLER_REGISTRATION_USER'], data=user)
+        allure.attach(body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                      name="Ответ на попытку регистрации пользователя",
+                      attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
+    @allure.step("Пытаемся авторизоваться под пользователем")
+    def try_user_authorization(user):
+        response = RequestTools.send_request(handler=const['HANDLER_AUTHORIZATION_USER'], data=user)
+        allure.attach(body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                      name="Ответ на попытку авторизоваться под пользователем",
+                      attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
+    @allure.step("Пытаемся удалить пользователя")
+    def try_to_delete_user(user_access_token):
+        response = RequestTools.send_request(handler=const['HANDLER_DELETE_USER'], headers=user_access_token)
+        allure.attach(body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                      name="Ответ на попытку удалить пользователя",
+                      attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
+    def try_to_get_ingredients():
+        response = RequestTools.send_request(handler=const['HANDLER_GET_INGREDIENTS'])
+        return response
+
+    @staticmethod
+    @allure.step("Удаляем пользователя после теста")
+    def delete_user_after_test(user):
+        response = RequestTools.try_user_authorization(user)
+        if response.status_code == 200:
+            token = response.json()[const['USER_ACCESS_TOKEN_PARAMETER_NAME']]
+            RequestTools.try_to_delete_user(user_access_token={const['USER_AUTHORIZATION_PARAMETER_NAME']: token})
+            allure.attach(
+                body=f"Удален пользователь с именем {user[const['USER_NAME_PARAMETER_NAME']]} (email: {user[const['USER_EMAIL_PARAMETER_NAME']]})".encode(),
+                name="Успешное удаление созданного пользователя",
+                attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        else:
+            allure.attach(body=f"Авторизоваться под пользователем не удалось".encode(),
+                          name="Ошибка удаления пользователя",
+                          attachment_type=allure.attachment_type.TEXT, extension=".txt")
+
+class Generators:
+
+    @staticmethod
+    def generate_random_email():
+        login_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=random.randint(3, 10)))
+        email_name = ''.join(random.choices(string.ascii_lowercase, k=random.randint(3, 10)))
+        email_domain = ''.join(random.choices(string.ascii_lowercase, k=2))
+        return f"{login_name}@{email_name}.{email_domain}"
+
+    @staticmethod
+    def generate_random_password():
+        allowed_chars = string.digits
+        random_password = ''.join(random.choices(allowed_chars, k=8))
+        return random_password
+
+    @staticmethod
+    def chose_random_ingredient():
+        response = RequestTools.try_to_get_ingredients().json()["data"]
+        list_of_ingredients = []
+        for element in response:
+            match element['type']:
+                case "bun":
+                    list_of_ingredients.append(element["_id"])
+                case "main":
+                    list_of_ingredients.append(element["_id"])
+                case "sauce":
+                    list_of_ingredients.append(element["_id"])
+        random_ingredient = random.choice(list_of_ingredients)
+        return random_ingredient, Tools.find_ingredient_name_by_id(response, random_ingredient)
+
+    @staticmethod
+    def generate_random_burger():
+        response = RequestTools.try_to_get_ingredients().json()["data"]
+        list_of_bun = []
+        list_of_main = []
+        list_of_sauce = []
+        for element in response:
+            match element['type']:
+                case "bun":
+                    list_of_bun.append(element["_id"])
+                case "main":
+                    list_of_main.append(element["_id"])
+                case "sauce":
+                    list_of_sauce.append(element["_id"])
+        random_bun = random.choice(list_of_bun)
+        random_main = random.choice(list_of_main)
+        random_sauce = random.choice(list_of_sauce)
+        return [random_bun, random_main, random_sauce]
