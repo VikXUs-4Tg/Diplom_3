@@ -1,5 +1,3 @@
-from time import sleep as pause
-
 import allure
 
 from data import WEBPAGE, const
@@ -67,5 +65,14 @@ class TestSuit4:
         all_time_counter_value_2 = order_feed_page.get_counter_value(counter=const['COUNTER_TODAY_ORDERS_DEAL'])
         Tools.check_that_value_differs_from_not_expected_value(not_expected_value=all_time_counter_value_1, actually_value=all_time_counter_value_2)
 
-
-
+    @allure.title('4-5 Проверка появления в разделе "В работе" в "Ленте заказов" номера оформленного заказа')
+    @allure.description('Открываем главную страницу сервиса «Stellar Burgers», входим в сервис под созданным пользователем, переходим в окно конструктора и создаем заказ с случайными ингредиентами, переходим в окно "Лента заказов", ищем созданный заказ в разделе "В работе" (сверяем номер заказа)')
+    @allure.story("Тестовый сценарий № 4 'Раздел «Лента заказов»'")
+    @allure.link(WEBPAGE, name='Учебный сервис «Stellar Burgers» (стенд)')
+    def test_order_number_in_progress_section_inside_order_feed_after_making_order(self, order_feed_page, constructor_page, personal_account_page, random_user, random_burger=Generators.generate_random_burger()):
+        personal_account_page.open_start_page()
+        personal_account_page.logon_by_user(email=random_user[0], password=random_user[1])
+        constructor_page.push_button_constructor_on_header()
+        order_identifier = constructor_page.make_order_and_return_identifier_number(burger=random_burger)
+        order_feed_page.push_button_to_order_feed_on_header()
+        order_feed_page.check_order_number_in_progress_section_inside_order_feed(order_identifier=order_identifier)

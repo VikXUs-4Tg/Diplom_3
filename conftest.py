@@ -12,12 +12,12 @@ from page_objects.personal_account_page import PersonalAccountPage
 def driver(request):
     if request.param == "chrome":
         chrome_options = webdriver.ChromeOptions()
-        #chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--headless')
         driver = webdriver.Chrome(options=chrome_options)
         driver.set_window_size(1920, 1080)
     elif request.param == "firefox":
         firefox_options = webdriver.FirefoxOptions()
-        #firefox_options.add_argument('--headless')
+        firefox_options.add_argument('--headless')
         driver = webdriver.Firefox(options=firefox_options)
         driver.set_window_size(1920, 1080)
     yield driver
@@ -50,4 +50,3 @@ def random_user():
     RequestTools.try_to_register_new_user(user=random_user_api_data)
     yield user, password
     RequestTools.delete_user_after_test(user=random_user_api_data)
-

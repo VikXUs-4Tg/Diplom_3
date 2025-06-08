@@ -1,5 +1,4 @@
 import allure
-from time import sleep as pause
 
 from data import WEBPAGE
 
@@ -7,7 +6,7 @@ from data import WEBPAGE
 class TestSuit2:
 
     @allure.title('2-1 Проверка перехода в окно "Вход" кликом по кнопке "Личный кабинет" в хедере для не авторизированного пользователя')
-    @allure.description('Открываем главную страницу сервиса «Stellar Burgers», переходим в окно "Вход" через кнопку "Личный кабинет" в хедере, проверяем наличие кнопки "Войти" (ее текстовое содержимое)')
+    @allure.description('Открываем главную страницу сервиса «Stellar Burgers», переходим в окно "Вход" через кнопку "Личный кабинет" в хедере, проверяем наличие кнопки "Войти" меню "Вход" (ее текстовое содержимое)')
     @allure.story("Тестовый сценарий № 2 'Личный кабинет'")
     @allure.link(WEBPAGE, name='Учебный сервис «Stellar Burgers» (стенд)')
     def test_button_personal_account_in_header_pass_to_window_enter_if_user_not_authorized(self, personal_account_page):
@@ -36,7 +35,7 @@ class TestSuit2:
         personal_account_page.click_button_order_history_in_personal_account()
         personal_account_page.check_orders_history_dashboard_is_present_in_order_history_of_personal_account()
 
-    @allure.title('2-4 Проверка выход из аккаунта')
+    @allure.title('2-4 Проверка работы кнопки выхода из аккаунта')
     @allure.description('Открываем главную страницу сервиса «Stellar Burgers», входим в сервис под созданным пользователем, переходим в окно личного кабинета через кнопку "Личный кабинет" в хедере, нажимаем кнопку "Выйти", переходим в меню "Конструктор", нажимаем на кнопку "Личный кабинет" в хедере, проверяем наличие кнопки "Войти" в меню "Вход" (вариант для не авторизированного пользователя)')
     @allure.story("Тестовый сценарий № 2 'Личный кабинет'")
     @allure.link(WEBPAGE, name='Учебный сервис «Stellar Burgers» (стенд)')

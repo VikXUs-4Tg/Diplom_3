@@ -29,3 +29,7 @@ class OrderFeedPage(BasePage):
     @allure.step("Проверяем на соответствие номер заказа в окне детализации по заказу (№ {order_identifier}) в меню 'Лента заказов'")
     def check_order_number_in_details_window_inside_order_feed(self, order_identifier):
         Tools.check_text_of_element(expected_value=order_identifier, actually_value=self.get_element(OFPL.ORDER_NUMBER_IN_DETAILS_WINDOW).text)
+
+    @allure.step("Проверяем наличие номера (№ {order_identifier}) сделанного заказа в разделе 'В работе' в 'Ленте заказов'")
+    def check_order_number_in_progress_section_inside_order_feed(self, order_identifier):
+        Tools.check_text_of_element(expected_value=order_identifier, actually_value=self.get_element(OFPL.ORDERS_IN_WORK).text)
