@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 
-class ConstructorLocators:
+class ConstructorPageLocators:
     TITLE_ASSEMBLE_THE_BURGER =         (By.XPATH, "//h1[@class='text text_type_main-large mb-5 mt-10']")
     BUTTON_PLACE_AN_ORDER =             (By.XPATH, "//button[@class='button_button__33qZ0 button_button_type_primary__1O7Bx button_button_size_large__G21Vg']")
     SCROLL_BAR_POSITION =               (By.XPATH, "//div[@class='tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect']")

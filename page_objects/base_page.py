@@ -1,6 +1,6 @@
 import allure
 
-from data import const
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait as WDW
 from selenium.webdriver.support import expected_conditions as EC
 from locators.base_page_locators import BasePageLocators as BPL
@@ -22,18 +22,22 @@ class BasePage:
     def open_start_page(self):
         self.open_page(page=self.start_page)
 
-    def find_and_click(self, element):
-        self.find_and_focus_by_script(element=element)
-        self.driver.find_element(*element).click()
-
-    def find_and_click_by_script(self, element):
-        self.wait.until(EC.presence_of_element_located(element))
-        self.driver.execute_script("arguments[0].click();", self.driver.find_element(*element))
-
     def find_and_focus_by_script(self, element):
         self.wait.until(EC.presence_of_element_located(element))
         self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(*element))
         self.wait.until(EC.element_to_be_clickable(element))
+
+    def find_and_click_by_script(self, element):
+        self.find_and_focus_by_script(element=element)
+        self.driver.execute_script("arguments[0].click();", self.driver.find_element(*element))
+
+    def find_and_click(self, element):
+        self.find_and_focus_by_script(element=element)
+        self.driver.find_element(*element).click()
+
+    def find_equal_elements(self, elements):
+        self.find_and_focus_by_script(element=elements)
+        return self.driver.find_elements(*elements)
 
     def entry_data_to_field(self, element, data):
         self.find_and_focus_by_script(element=element)
@@ -42,6 +46,14 @@ class BasePage:
     def get_element(self, element):
         self.find_and_focus_by_script(element=element)
         return self.driver.find_element(*element)
+
+    def wait_of_element(self, locator):
+        self.wait.until(EC.presence_of_element_located(locator))
+
+    def check_present_of_element(self, locator):
+        try: self.wait.until(EC.presence_of_element_located(locator))
+        except TimeoutException as e:
+            assert False, f"\nОжидаемое значение:\n'Элемент присутствует и виден'\nФактическое значение:\nЭлемент не найден или не стал видимым в течение заданного времени ожидания"
 
     @allure.step("Находим и нажимаем на логотип 'Stellar Burgers' в хедере страницы")
     def push_logo_on_header(self):

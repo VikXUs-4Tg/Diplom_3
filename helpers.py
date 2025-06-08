@@ -1,5 +1,9 @@
+import allure
 import random
 import string
+import requests
+
+from data import const
 
 
 class Tools:
@@ -11,6 +15,61 @@ class Tools:
     @staticmethod
     def replace_string_in_locator(locator, string_to_replace, new_string):
         return locator.replace(string_to_replace, new_string)
+
+class RequestTools:
+
+    @staticmethod
+    @allure.step("Отправляем запрос на ручку")
+    def send_request(handler, headers = None, params = None, data = None, tail=None):
+        method, endpoint = handler
+        if tail:
+            response = getattr(requests, method)(endpoint + str(tail), headers=headers, params=params, data=data)
+        else:
+            response = getattr(requests, method)(endpoint, headers=headers, params=params, data=data)
+        return response
+
+    @staticmethod
+    @allure.step("Пытаемся зарегистрировать пользователя")
+    def try_to_register_new_user(user):
+        response = RequestTools.send_request(handler=const['HANDLER_REGISTRATION_USER'], data=user)
+        allure.attach(body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                      name="Ответ на попытку регистрации пользователя",
+                      attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
+    @allure.step("Пытаемся авторизоваться под пользователем")
+    def try_user_authorization(user):
+        response = RequestTools.send_request(handler=const['HANDLER_AUTHORIZATION_USER'], data=user)
+        allure.attach(body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                      name="Ответ на попытку авторизоваться под пользователем",
+                      attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
+    @allure.step("Пытаемся удалить пользователя")
+    def try_to_delete_user(user_access_token):
+        response = RequestTools.send_request(handler=const['HANDLER_DELETE_USER'], headers=user_access_token)
+        allure.attach(body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                      name="Ответ на попытку удалить пользователя",
+                      attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
+    @allure.step("Удаляем пользователя после теста")
+    def delete_user_after_test(user):
+        response = RequestTools.try_user_authorization(user)
+        if response.status_code == 200:
+            token = response.json()[const['USER_ACCESS_TOKEN_PARAMETER_NAME']]
+            RequestTools.try_to_delete_user(user_access_token={const['USER_AUTHORIZATION_PARAMETER_NAME']: token})
+            allure.attach(
+                body=f"Удален пользователь с именем {user[const['USER_NAME_PARAMETER_NAME']]} (email: {user[const['USER_EMAIL_PARAMETER_NAME']]})".encode(),
+                name="Успешное удаление созданного пользователя",
+                attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        else:
+            allure.attach(body=f"Авторизоваться под пользователем не удалось".encode(),
+                          name="Ошибка удаления пользователя",
+                          attachment_type=allure.attachment_type.TEXT, extension=".txt")
 
 class Generators:
 
