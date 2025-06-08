@@ -23,17 +23,17 @@ def driver(request):
     yield driver
     driver.quit()
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='function')
 def constructor_page(driver):
     constructor_page = ConstructorPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
     return constructor_page
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='function')
 def personal_account_page(driver):
     personal_account_page = PersonalAccountPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
     return personal_account_page
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='function')
 def order_feed_page(driver):
     order_feed_page = OrderFeedPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
     return order_feed_page

@@ -66,12 +66,8 @@ class RequestTools:
         return response
 
     @staticmethod
-    @allure.step("Пытаемся получить список ингредиентов")
     def try_to_get_ingredients():
         response = RequestTools.send_request(handler=const['HANDLER_GET_INGREDIENTS'])
-        allure.attach(  body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
-                        name="Ответ на попытку получить список ингредиентов",
-                        attachment_type=allure.attachment_type.TEXT, extension=".txt")
         return response
 
     @staticmethod
