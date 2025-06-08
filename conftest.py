@@ -3,19 +3,21 @@ import pytest
 from data import WEBPAGE, const
 from helpers import RequestTools, Generators
 from selenium import webdriver
+from page_objects.order_feed_page import OrderFeedPage
 from page_objects.constructor_page import ConstructorPage
 from page_objects.personal_account_page import PersonalAccountPage
+
 
 @pytest.fixture(scope='class', params=["chrome", "firefox"])
 def driver(request):
     if request.param == "chrome":
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
+        #chrome_options.add_argument('--headless')
         driver = webdriver.Chrome(options=chrome_options)
         driver.set_window_size(1920, 1080)
     elif request.param == "firefox":
         firefox_options = webdriver.FirefoxOptions()
-        firefox_options.add_argument('--headless')
+        #firefox_options.add_argument('--headless')
         driver = webdriver.Firefox(options=firefox_options)
         driver.set_window_size(1920, 1080)
     yield driver
@@ -30,6 +32,11 @@ def constructor_page(driver):
 def personal_account_page(driver):
     personal_account_page = PersonalAccountPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
     return personal_account_page
+
+@pytest.fixture(scope='class')
+def order_feed_page(driver):
+    order_feed_page = OrderFeedPage(driver=driver, wait_timer=const['WAIT_TIMER'], start_page=WEBPAGE)
+    return order_feed_page
 
 @pytest.fixture(scope='function')
 def random_user():

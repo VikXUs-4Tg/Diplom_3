@@ -18,6 +18,7 @@ class BasePage:
     def open_page(self, page):
         self.driver.get(page)
         self.wait.until(EC.url_contains(page))
+        self.wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
 
     def open_start_page(self):
         self.open_page(page=self.start_page)
@@ -47,13 +48,18 @@ class BasePage:
         self.find_and_focus_by_script(element=element)
         return self.driver.find_element(*element)
 
-    def wait_of_element(self, locator):
-        self.wait.until(EC.presence_of_element_located(locator))
+    def wait_of_element(self, element):
+        return self.wait.until(EC.presence_of_element_located(element))
 
-    def check_present_of_element(self, locator):
-        try: self.wait.until(EC.presence_of_element_located(locator))
+    def check_present_of_element(self, element):
+        try: self.wait.until(EC.presence_of_element_located(element))
         except TimeoutException as e:
-            assert False, f"\nОжидаемое значение:\n'Элемент присутствует и виден'\nФактическое значение:\nЭлемент не найден или не стал видимым в течение заданного времени ожидания"
+            assert False, f'\nОжидаемое значение:\n"Элемент присутствует и виден"\nФактическое значение:\n"Элемент не найден или невидим"'
+
+    def check_not_present_of_element(self, element):
+        try: self.wait.until(EC.invisibility_of_element_located(element))
+        except TimeoutException as e:
+            assert False, f'\nОжидаемое значение:\n"Элемент не найден или невидим"\nФактическое значение:\n"Элемент присутствует и виден"'
 
     @allure.step("Находим и нажимаем на логотип 'Stellar Burgers' в хедере страницы")
     def push_logo_on_header(self):
@@ -70,6 +76,10 @@ class BasePage:
     @allure.step("Находим и нажимаем на кнопку 'Личный кабинет' в хедере страницы")
     def push_button_to_personal_account_on_header(self):
         self.find_and_click_by_script(element=BPL.BUTTON_TO_PERSONAL_ACCOUNT)
+
+    @staticmethod
+    def find_in_parent(parent_of_element, element):
+        return parent_of_element.find_element(*element)
 
 
     

@@ -16,6 +16,12 @@ class Tools:
     def replace_string_in_locator(locator, string_to_replace, new_string):
         return locator.replace(string_to_replace, new_string)
 
+    @staticmethod
+    def find_ingredient_name_by_id(ingredients_list, ingredient_id):
+        for ingredient in ingredients_list:
+            if ingredient['_id'] == ingredient_id: return ingredient['name']
+        return None
+
 class RequestTools:
 
     @staticmethod
@@ -56,6 +62,15 @@ class RequestTools:
         return response
 
     @staticmethod
+    @allure.step("Пытаемся получить список ингредиентов")
+    def try_to_get_ingredients():
+        response = RequestTools.send_request(handler=const['HANDLER_GET_INGREDIENTS'])
+        allure.attach(  body=f"Код ответа: {response.status_code}\nТело ответа:\n{response.text}".encode(),
+                        name="Ответ на попытку получить список ингредиентов",
+                        attachment_type=allure.attachment_type.TEXT, extension=".txt")
+        return response
+
+    @staticmethod
     @allure.step("Удаляем пользователя после теста")
     def delete_user_after_test(user):
         response = RequestTools.try_user_authorization(user)
@@ -85,3 +100,18 @@ class Generators:
         allowed_chars = string.digits
         random_password = ''.join(random.choices(allowed_chars, k=8))
         return random_password
+
+    @staticmethod
+    def chose_random_ingredient():
+        response = RequestTools.try_to_get_ingredients().json()["data"]
+        list_of_ingredients = []
+        for element in response:
+            match element['type']:
+                case "bun":
+                    list_of_ingredients.append(element["_id"])
+                case "main":
+                    list_of_ingredients.append(element["_id"])
+                case "sauce":
+                    list_of_ingredients.append(element["_id"])
+        random_ingredient = random.choice(list_of_ingredients)
+        return random_ingredient, Tools.find_ingredient_name_by_id(response, random_ingredient)
