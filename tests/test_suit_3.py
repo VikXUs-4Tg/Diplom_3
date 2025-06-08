@@ -46,3 +46,34 @@ class TestSuit3:
         constructor_page.click_on_element_ingredient_in_constructor_menu(ingredient=random_ingredient[0])
         constructor_page.click_on_close_property_of_ingredient_window_button_in_constructor_menu()
         constructor_page.check_chosen_ingredient_pop_up_window_is_not_available()
+
+    @allure.title('3-5 Проверка увеличения счетчика ингредиента при его добавлении в заказ')
+    @allure.description('Открываем главную страницу сервиса «Stellar Burgers», выбираем случайны ингредиент из списка и переносим его в состав заказа, проверяем, что счетчик выбранного ингредиента увеличился на соответствующее значение')
+    @allure.story("Тестовый сценарий № 3")
+    @allure.link(WEBPAGE, name='Учебный сервис «Stellar Burgers» (стенд)')
+    def test_counter_of_added_ingredient_is_growing(self, constructor_page, random_ingredient=Generators.chose_random_ingredient()):
+        constructor_page.open_start_page()
+        constructor_page.drag_and_drop_ingredient_in_basket(ingredient=random_ingredient[0])
+        constructor_page.check_that_counter_of_ingredient_not_zero(ingredient=random_ingredient[0])
+
+    @allure.title('3-6 Проверка что авторизованный пользователь может оформить заказ с валидными ингредиентами')
+    @allure.description('Открываем главную страницу сервиса «Stellar Burgers», входим в сервис под созданным пользователем, выбираем случайны валидный состав ингредиентов из списка и переносим его в состав заказа, нажимаем кнопу "Оформить заказ", ожидаем появления номера заказа отличного от значения "9999"')
+    @allure.story("Тестовый сценарий № 3")
+    @allure.link(WEBPAGE, name='Учебный сервис «Stellar Burgers» (стенд)')
+    def test_allow_make_order_if_user_authorized(self, constructor_page, personal_account_page, random_user, random_burger=Generators.generate_random_burger()):
+        personal_account_page.open_start_page()
+        personal_account_page.logon_by_user(email=random_user[0], password=random_user[1])
+        constructor_page.push_button_constructor_on_header()
+        constructor_page.assemble_the_burger_to_basket(burger=random_burger)
+        constructor_page.click_button_to_make_order_in_constructor_menu()
+        constructor_page.check_created_order_get_identifier()
+
+    @allure.title('3-7 Проверка что не авторизованный пользователь не может оформить заказ с валидными ингредиентами')
+    @allure.description('Открываем главную страницу сервиса «Stellar Burgers», выбираем случайны валидный состав ингредиентов из списка и переносим его в состав заказа, пытаемся нажать кнопу "Оформить заказ", ожидаем появления окна "Вход"')
+    @allure.story("Тестовый сценарий № 3")
+    @allure.link(WEBPAGE, name='Учебный сервис «Stellar Burgers» (стенд)')
+    def test_allow_make_order_if_user_authorized(self, constructor_page, personal_account_page, random_burger=Generators.generate_random_burger()):
+        constructor_page.open_start_page()
+        constructor_page.assemble_the_burger_to_basket(burger=random_burger)
+        constructor_page.click_button_to_make_order_in_constructor_menu()
+        personal_account_page.check_that_login_button_is_present_in_menu_enter()

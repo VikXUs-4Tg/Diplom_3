@@ -13,6 +13,10 @@ class Tools:
         assert expected_value in actually_value, f'\nОжидаемое значение:\n"{expected_value}"\nФактическое значение:\n"{actually_value}"'
 
     @staticmethod
+    def check_that_value_differs_from_not_expected_value(actually_value, not_expected_value):
+        assert int(actually_value) != not_expected_value, f'\nОжидаемое значение:\n"{actually_value}"\nне отличается от:\n"{not_expected_value}"'
+
+    @staticmethod
     def replace_string_in_locator(locator, string_to_replace, new_string):
         return locator.replace(string_to_replace, new_string)
 
@@ -115,3 +119,22 @@ class Generators:
                     list_of_ingredients.append(element["_id"])
         random_ingredient = random.choice(list_of_ingredients)
         return random_ingredient, Tools.find_ingredient_name_by_id(response, random_ingredient)
+
+    @staticmethod
+    def generate_random_burger():
+        response = RequestTools.try_to_get_ingredients().json()["data"]
+        list_of_bun = []
+        list_of_main = []
+        list_of_sauce = []
+        for element in response:
+            match element['type']:
+                case "bun":
+                    list_of_bun.append(element["_id"])
+                case "main":
+                    list_of_main.append(element["_id"])
+                case "sauce":
+                    list_of_sauce.append(element["_id"])
+        random_bun = random.choice(list_of_bun)
+        random_main = random.choice(list_of_main)
+        random_sauce = random.choice(list_of_sauce)
+        return [random_bun, random_main, random_sauce]

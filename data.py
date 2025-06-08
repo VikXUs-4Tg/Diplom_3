@@ -22,4 +22,6 @@ results = {
 'PERSONAL_ACCOUNT_TITLE_INFO_TEXT' : 'В этом разделе вы можете изменить свои персональные данные',
 'CONSTRUCTOR_TITLE_INFO_TEXT' : 'Соберите бургер',
 'ORDER_FEED_TITLE_INFO_TEXT' : 'Лента заказов',
+'UNEXPECTED_COUNTER_VALUE' : 0,
+'UNEXPECTED_IDENTIFIER_VALUE' : 9999,
 }
