@@ -36,6 +36,16 @@ class PersonalAccountPage(BasePage):
     def click_button_order_history_in_personal_account(self):
         self.find_and_click_by_script(element=PAPL.BUTTON_ORDERS_HISTORY)
 
+    @allure.step("Находим и нажимаем на кнопку 'Выход' в личном кабинете")
+    def click_button_exit_from_account_in_personal_account(self):
+        self.find_and_click_by_script(element=PAPL.BUTTON_EXITING_FROM_ACCOUNT)
+        self.push_button_constructor_on_header()
+        self.wait_of_element(PAPL.TITLE_ASSEMBLE_THE_BURGER)
+
+    @allure.step("Получаем номер заказа у единственного заказа в истории заказов в личном кабинете")
+    def get_identifier_number_from_one_order_in_orders_history(self):
+        return self.get_element(element=PAPL.ORDERS_IN_ORDERS_HISTORY).text
+
     @allure.step("Производим регистрацию нового пользователя с почтой:{email} и паролем:{password}")
     def register_new_user(self, email, password):
         names = self.find_equal_elements(elements=PAPL.FIELD_FOR_ENTRY_EMAIL)

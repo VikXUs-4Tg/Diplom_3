@@ -2,6 +2,8 @@ WEBPAGE= 'https://stellarburgers.nomoreparties.site'
 
 const = {
 'WAIT_TIMER' : 10,
+'COUNTER_ALL_TIME_ORDERS_DEAL' : 'Выполнено за все время:',
+'COUNTER_TODAY_ORDERS_DEAL' : 'Выполнено за сегодня:',
 # Константы, необходимые для работы с API:
 'HANDLER_REGISTRATION_USER' : ('post', WEBPAGE + '/api/auth/register/'),
 'HANDLER_AUTHORIZATION_USER' : ('post', WEBPAGE + '/api/auth/login/'),

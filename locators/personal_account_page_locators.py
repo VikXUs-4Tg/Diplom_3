@@ -21,5 +21,6 @@ class PersonalAccountPageLocators:
     TITLE_INFO =                        (By.XPATH, "//p[@class='Account_text__fZAIn text text_type_main-default']")
     # Элементы в истории заказов:
     ORDERS_HISTORY_DASHBOARD =          (By.XPATH, "//ul[@class='OrderHistory_profileList__374GU OrderHistory_list__KcLDB']")
+    ORDERS_IN_ORDERS_HISTORY =          (By.XPATH, "//p[@class='text text_type_digits-default']")
     # Локатор на странице конструктора в целях стабилизации тесов
     TITLE_ASSEMBLE_THE_BURGER =         (By.XPATH, "//h1[@class='text text_type_main-large mb-5 mt-10']")

@@ -23,10 +23,20 @@ class ConstructorPage(BasePage):
         self.find_and_click_by_script(element=locator_of_ingredient)
 
     @allure.step("Находим и нажимаем на кнопку закрытия окна свойств ингредиента")
-    def click_on_close_property_of_ingredient_window_button_in_constructor_menu(self):
-        parent = self.wait_of_element(element=CPL.SECTION_OF_INGREDIENT_PROPERTIES)
+    def click_on_close_button_for_property_window_in_constructor_menu(self):
+        parent = self.wait_of_element(element=CPL.SECTION_OF_CONSTRUCTOR_PROPERTIES)
         button_to_close = self.find_in_parent(parent_of_element=parent, element=CPL.BUTTON_CLOSE_PROPERTIES_WINDOW)
         self.click_by_script(element=button_to_close)
+
+    @allure.step("Делаем заказ и получаем номер заказа")
+    def make_order_and_return_identifier_number(self, burger):
+        self.assemble_the_burger_to_basket(burger=burger)
+        self.find_and_click_by_script(element=CPL.BUTTON_PLACE_AN_ORDER)
+        try: self.wait_text_change_of_element(element=CPL.IDENTIFIER_OF_CREATED_ORDER,not_expected_text_value=results['UNEXPECTED_IDENTIFIER_VALUE'])
+        except TimeoutException: pass
+        identifier = self.get_element(CPL.IDENTIFIER_OF_CREATED_ORDER).text
+        self.click_on_close_button_for_property_window_in_constructor_menu()
+        return identifier
 
     @allure.step("Собираем в корзине бургер из ингредиентов ({burger})")
     def assemble_the_burger_to_basket(self, burger):
